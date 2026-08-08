@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}About - Identra AI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+<style>
+    .about-card {
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+    }
+    .about-card h3 {
+        color: var(--neon-cyan);
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .tech-pill {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        padding: 0.35rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        display: inline-block;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header Navigation -->
+<header class="landing-header">
+    <div class="nav-container">
+        <a href="/" class="logo">
+            <i class="fa-solid fa-brain"></i> Identra AI
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="/#features" class="nav-link">Features</a></li>
+                <li><a href="/#workflow" class="nav-link">Workflow</a></li>
+                <li><a href="/#statistics" class="nav-link">Statistics</a></li>
+                <li><a href="/auth/login" class="btn btn-secondary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem;">Login</a></li>
+                <li><a href="/auth/register" class="btn btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem;">Get Started</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<section class="section-padding" style="padding-top: 8rem; max-width: 900px;">
+    
+    <div class="section-header" data-aos="fade-up">
+        <div class="hero-badge" style="margin: 0 auto;"><i class="fa-solid fa-trophy"></i> National Hackathon 2026 Submission</div>
+        <h2 class="section-title" style="font-size: 2.8rem; margin-top: 0.75rem;">Identity Platform Architecture</h2>
+        <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Identra AI is a next-generation SaaS digital identity ecosystem bridging document indexes to relationship mapping networks.
+        </p>
+    </div>
+
+    <!-- Project Overview -->
+    <div class="glass-card about-card" data-aos="fade-up">
+        <h3><i class="fa-solid fa-circle-info"></i> Project Overview</h3>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+            Identra AI enables students and developers to construct an immutable chronological timeline and relationship nodes map of their credentials. The system uses pytesseract OCR and regex detail parsers to automatically build career profiles directly from documents uploads.
+        </p>
+    </div>
+
+    <!-- Architecture & Tech Stack -->
+    <div class="glass-card about-card" data-aos="fade-up">
+        <h3><i class="fa-solid fa-cubes"></i> System Architecture</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Built with modular Flask blueprint containers and an SQLite relational database mapping clean schemas for documents, user states, nodes, and timeline milestones.
+        </p>
+        <h4 style="color:#fff; font-size: 1rem; margin-bottom: 0.75rem; text-transform: uppercase;">Technology Stack:</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+            <span class="tech-pill">Python / Flask</span>
+            <span class="tech-pill">SQLAlchemy ORM</span>
+            <span class="tech-pill">SQLite / Postgres-Ready</span>
+            <span class="tech-pill">Vanilla HTML5/CSS3</span>
+            <span class="tech-pill">GSAP Core Animation</span>
+            <span class="tech-pill">AOS Transitions</span>
+            <span class="tech-pill">Vis.js Graph Canvas</span>
+            <span class="tech-pill">Chart.js Analytics</span>
+            <span class="tech-pill">pytesseract / pdfplumber</span>
+        </div>
+    </div>
+
+    <!-- AI Features & Future Scope -->
+    <div class="glass-card about-card" data-aos="fade-up">
+        <h3><i class="fa-solid fa-wand-magic-sparkles"></i> AI Capabilities & Future Scope</h3>
+        <ul style="color: var(--text-secondary); padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; line-height: 1.5;">
+            <li><strong>OCR Content Extraction</strong>: Extract text content from image-based certificates and PDF sheets.</li>
+            <li><strong>Automated Classification</strong>: Rule-based keyword matching classifies document categories.</li>
+            <li><strong>Entity Extraction</strong>: Scans phone, email, college, name, certifications, and skills.</li>
+            <li><strong>Future Scope</strong>: Integration with the Google Gemini API to enable native resume analysis, interview coaching, and automated portfolio builds.</li>
+        </ul>
+    </div>
+
+    <!-- Hackathon details -->
+    <div class="glass-card about-card" style="background: rgba(91,124,250,0.05); border-color: var(--border-glow);" data-aos="fade-up">
+        <h3><i class="fa-solid fa-people-group"></i> Hackathon Development Team</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Identra AI was conceptualized and completed as a production-quality Digital Identity prototype for the national coding championship.</p>
+        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-muted); border-top:1px solid var(--border-subtle); padding-top:0.75rem;">
+            <span>Project Version: <strong>v1.0.0 (Stable Release)</strong></span>
+            <span>Hackathon Code: <strong>Team Identra</strong></span>
+        </div>
+    </div>
+
+</section>
+
+<!-- Footer -->
+<footer class="landing-footer">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-brain"></i> Identra AI
+            </a>
+            <p class="footer-desc">Empowering developers, students, and professionals with a unified, cognitive identity representation.</p>
+        </div>
+        <div class="footer-links">
+            <h5>Product</h5>
+            <a href="/#features">Features</a>
+            <a href="/#workflow">Workflow</a>
+            <a href="/#statistics">Statistics</a>
+        </div>
+        <div class="footer-links">
+            <h5>Support & Resources</h5>
+            <a href="#">SaaS License</a>
+            <a href="#">Security Audits</a>
+            <a href="/about">Documentation</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 Identra AI. Built for national-level hackathon demonstrations.</p>
+        <div class="social-links">
+            <a href="#"><i class="fa-brands fa-github"></i></a>
+            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+    </div>
+</footer>
+{% endblock %}

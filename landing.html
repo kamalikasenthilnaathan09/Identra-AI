@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}Identra AI - Your Intelligent Digital Identity System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}?v=200">
+{% endblock %}
+
+{% block content %}
+<!-- 1️⃣ Sticky Navbar -->
+<header class="landing-header">
+    <div class="nav-container">
+        <a href="/" class="logo">
+            <i class="fa-solid fa-brain"></i> Identra AI
+        </a>
+        <nav class="nav-menu">
+            <ul class="nav-links">
+                <li><a href="#hero" class="nav-link active">Home</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#workflow" class="nav-link">Workflow</a></li>
+                <li><a href="#why-us" class="nav-link">Why Us</a></li>
+                <li><a href="#faq" class="nav-link">FAQ</a></li>
+            </ul>
+        </nav>
+        <div class="nav-actions">
+            {% if session.get('user_id') %}
+            <a href="/dashboard/" class="btn btn-primary nav-btn-start"><i class="fa-solid fa-chart-pie"></i> Console</a>
+            <a href="/auth/logout" class="btn btn-secondary nav-btn-login" style="border-color: rgba(239, 68, 68, 0.3); color: #f87171;">Logout</a>
+            {% else %}
+            <a href="/auth/login" class="btn btn-secondary nav-btn-login">Login</a>
+            <a href="/auth/register" class="btn btn-primary nav-btn-start">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<!-- 2️⃣ Hero Section -->
+<section id="hero" class="hero-section">
+    <div class="hero-bg-canvas">
+        <div class="hero-mesh-glow"></div>
+    </div>
+    
+    <div class="hero-content">
+        <div class="hero-badge">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> AI-Powered Digital Identity
+        </div>
+        <h1 class="hero-title">
+            Your Intelligent<br><span class="gradient-text">Digital Identity</span>
+        </h1>
+        <p class="hero-subtitle">
+            Store, organize, search and visualize your academic and professional journey using AI-powered document intelligence.
+        </p>
+        <div class="hero-actions">
+            {% if session.get('user_id') %}
+            <a href="/dashboard/" class="btn btn-primary btn-hero-start">Go to Console <i class="fa-solid fa-arrow-right"></i></a>
+            {% else %}
+            <a href="/auth/register" class="btn btn-primary btn-hero-start">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+            {% endif %}
+            <a href="#workflow" class="btn btn-secondary btn-hero-demo">Watch Demo <i class="fa-solid fa-play"></i></a>
+        </div>
+    </div>
+    
+    <div class="hero-art-container">
+        <div class="brain-graphic">
+            <div class="brain-glow"></div>
+            <i class="fa-solid fa-brain brain-mesh"></i>
+            
+            <!-- 6 Floating Icons: Certificate, PDF, Resume, AI, Code, Education -->
+            <div class="floating-icon fi-cert" title="Certificate"><i class="fa-solid fa-award"></i></div>
+            <div class="floating-icon fi-pdf" title="PDF Document"><i class="fa-solid fa-file-pdf"></i></div>
+            <div class="floating-icon fi-resume" title="Resume"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="floating-icon fi-ai" title="AI Cognitive Engine"><i class="fa-solid fa-brain"></i></div>
+            <div class="floating-icon fi-code" title="Code & Projects"><i class="fa-solid fa-code"></i></div>
+            <div class="floating-icon fi-edu" title="Education & Degrees"><i class="fa-solid fa-graduation-cap"></i></div>
+        </div>
+    </div>
+</section>
+
+<!-- 3️⃣ Live Statistics -->
+<section id="statistics" class="section-padding stats-section">
+    <div class="grid stats-grid">
+        <div class="glass-card stat-card">
+            <div class="stat-number" data-count="500">500+</div>
+            <div class="stat-label">Digital Profiles</div>
+        </div>
+        <div class="glass-card stat-card">
+            <div class="stat-number" data-count="98">98%</div>
+            <div class="stat-label">Retrieval Accuracy</div>
+        </div>
+        <div class="glass-card stat-card">
+            <div class="stat-number">&lt;1 sec</div>
+            <div class="stat-label">AI Search Speed</div>
+        </div>
+        <div class="glass-card stat-card">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Secure Storage</div>
+        </div>
+    </div>
+</section>
+
+<!-- 4️⃣ Features Section (8 Premium Glass Cards Grid) -->
+<section id="features" class="section-padding">
+    <div class="section-header">
+        <div class="pill-header-badge">Core System Modules</div>
+        <h2 class="section-title">Designed for Full Career Intelligence</h2>
+        <p class="section-subtitle">A comprehensive suite of cognitive tools built for modern scholars and engineers.</p>
+    </div>
+    
+    <div class="grid features-grid-8">
+        <div class="glass-card feature-card">
+            <div class="feature-icon-wrapper fi-blue"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <h3>AI Document Upload</h3>
+            <p>Drag and drop PDFs, marksheets, resumes, and certificates with instant parsing and validation.</p>
+        </div>
+        <div class="glass-card feature-card">
+            <div class="feature-icon-wrapper fi-purple"><i class="fa-solid fa-eye"></i></div>
+            <h3>OCR Extraction</h3>
+            <p>Optical character recognition converts scanned image documents into structured, searchable text.</p>
+        </div>
+        <div class="glass-card feature-card">
+            <div class="feature-icon-wrapper fi-cyan"><i class="fa-solid fa-tags"></i></div>
+            <h3>Smart Categorization</h3>
+            <p>Automatically groups documents by degrees, certifications, internships, and project experience.</p>
+        </div>
+        <div class="glass-card feature-card">
+            <div class="feature-icon-wrapper fi-indigo"><i class="fa-solid fa-circle-nodes"></i></div>
+            <h3>Knowledge Graph</h3>
+            <p>Interactive visual graph mapping skills to achievements and organizational nodes seamlessly.</p>
+        </div>
+        <div class="glass-card feature-card">
+            <div class="feature-icon-wrapper fi-blue"><i class="fa-solid fa-route"></i></div>
+            <h3>Career Timeline</h3>
+            <p>Chronological milestone view of education, work experience, awards, and certifications.</p>
+        </div>
+        <div class="glass-card feature-card">
+            <div class="feature-icon-wrapper fi-purple"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+            <h3>Semantic Search</h3>
+            <p>Natural language query engine with keyword match highlighting and confidence scoring.</p>
+        </div>
+        <div class="glass-card feature-card">
+            <div class="feature-icon-wrapper fi-cyan"><i class="fa-solid fa-robot"></i></div>
+            <h3>AI Assistant</h3>
+            <p>ChatGPT-style cognitive co-pilot to generate resume summaries and answer career queries.</p>
+        </div>
+        <div class="glass-card feature-card">
+            <div class="feature-icon-wrapper fi-indigo"><i class="fa-solid fa-chart-line"></i></div>
+            <h3>Analytics Dashboard</h3>
+            <p>Interactive Doughnut, Bar, Area, and Radar metrics tracking identity balance and skill growth.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 5️⃣ Workflow Section (Horizontal Timeline) -->
+<section id="workflow" class="section-padding workflow-section">
+    <div class="section-header">
+        <div class="pill-header-badge">Workflow Process</div>
+        <h2 class="section-title">How Identra AI Operates</h2>
+        <p class="section-subtitle">Five seamless steps from raw document upload to instant cognitive retrieval.</p>
+    </div>
+    
+    <div class="workflow-timeline-5">
+        <div class="workflow-beam"></div>
+        <div class="workflow-step">
+            <div class="step-number">1</div>
+            <h4>Upload Documents</h4>
+            <p>Drop resumes, certificates, or degree PDFs.</p>
+        </div>
+        <div class="workflow-step">
+            <div class="step-number">2</div>
+            <h4>AI Processing</h4>
+            <p>OCR & NLP engines extract structured data.</p>
+        </div>
+        <div class="workflow-step">
+            <div class="step-number">3</div>
+            <h4>Knowledge Graph</h4>
+            <p>Construct interactive node connections.</p>
+        </div>
+        <div class="workflow-step">
+            <div class="step-number">4</div>
+            <h4>Timeline</h4>
+            <p>Organize career milestones chronologically.</p>
+        </div>
+        <div class="workflow-step">
+            <div class="step-number">5</div>
+            <h4>Smart Retrieval</h4>
+            <p>Query via search, chat or analytics.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 6️⃣ Why Choose Identra (3 Premium Cards) -->
+<section id="why-us" class="section-padding">
+    <div class="section-header">
+        <div class="pill-header-badge">Why Identra AI</div>
+        <h2 class="section-title">Unmatched Cognitive Intelligence</h2>
+        <p class="section-subtitle">Built with enterprise-grade privacy, high performance, and AI accuracy.</p>
+    </div>
+    
+    <div class="grid why-grid-3">
+        <div class="glass-card why-card">
+            <div class="why-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3>Privacy First</h3>
+            <p>Zero data selling. End-to-end encryption for all uploaded academic & career documents in your isolated user workspace.</p>
+        </div>
+        
+        <div class="glass-card why-card why-card-featured">
+            <div class="why-icon-box" style="background: rgba(99, 102, 241, 0.2); color: var(--accent-indigo); border: 1px solid rgba(99, 102, 241, 0.4);">
+                <i class="fa-solid fa-bolt-lightning"></i>
+            </div>
+            <h3>AI Powered</h3>
+            <p>Advanced cognitive OCR & graph neural mapping to build your verified digital identity automatically without manual effort.</p>
+        </div>
+        
+        <div class="glass-card why-card">
+            <div class="why-icon-box" style="background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.3);">
+                <i class="fa-solid fa-gauge-high"></i>
+            </div>
+            <h3>Fast Retrieval</h3>
+            <p>Sub-second semantic search latency across all extracted credentials, project code snippets, and career milestones.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 7️⃣ Testimonials (3 Glass Cards) -->
+<section id="testimonials" class="section-padding">
+    <div class="section-header">
+        <div class="pill-header-badge">Community Impact</div>
+        <h2 class="section-title">Loved by Engineers & Scholars</h2>
+        <p class="section-subtitle">Hear from students, researchers, and recruiters using Identra AI daily.</p>
+    </div>
+    
+    <div class="grid testimonials-grid-3">
+        <div class="glass-card testimonial-card">
+            <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
+            <p class="quote">"Identra AI completely transformed how I present my academic and project credentials. The Knowledge Graph visualizer is mind-blowing!"</p>
+            <div class="user-meta">
+                <div class="avatar-circle">AR</div>
+                <div>
+                    <div class="user-name">Alex Rivera</div>
+                    <div class="user-role">Stanford University CS '26</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass-card testimonial-card">
+            <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
+            <p class="quote">"Finding specific project snippets and certificates used to take hours. With Smart Search and OCR, it happens in milliseconds."</p>
+            <div class="user-meta">
+                <div class="avatar-circle">SC</div>
+                <div>
+                    <div class="user-name">Sophia Chen</div>
+                    <div class="user-role">AI Research Fellow</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass-card testimonial-card">
+            <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
+            <p class="quote">"The Knowledge Graph view gives us an instant 360-degree verified snapshot of candidate skills and career milestones."</p>
+            <div class="user-meta">
+                <div class="avatar-circle">MV</div>
+                <div>
+                    <div class="user-name">Marcus Vance</div>
+                    <div class="user-role">Senior Tech Recruiter</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 8️⃣ FAQ Accordion -->
+<section id="faq" class="section-padding">
+    <div class="section-header">
+        <div class="pill-header-badge">FAQ</div>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">Got questions? We've got answers.</p>
+    </div>
+    
+    <div class="faq-container">
+        <div class="glass-card faq-item active">
+            <div class="faq-question">
+                <span>What file formats does Identra AI support?</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                <p>Identra AI supports PDF documents, Microsoft Word files (.docx), PNG/JPG images, marksheets, and digital certificate credentials.</p>
+            </div>
+        </div>
+        
+        <div class="glass-card faq-item">
+            <div class="faq-question">
+                <span>How does the Knowledge Graph build node connections?</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                <p>Our cognitive engine parses extracted text and maps relationships between your verified skills, tools, educational degrees, and project experiences automatically.</p>
+            </div>
+        </div>
+        
+        <div class="glass-card faq-item">
+            <div class="faq-question">
+                <span>Is my document data private and secure?</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                <p>Yes. All uploaded files are encrypted with enterprise-grade standards and processed within your isolated user identity workspace.</p>
+            </div>
+        </div>
+        
+        <div class="glass-card faq-item">
+            <div class="faq-question">
+                <span>Can I export my resume and knowledge graph data?</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                <p>Absolutely! You can export customized ATS-friendly PDFs, JSON node network structures, and text summaries anytime with one click.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 9️⃣ Four-Column Premium Footer -->
+<footer class="landing-footer">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-brain"></i> Identra AI
+            </a>
+            <p class="footer-desc">Empowering developers, students, and professionals with a unified, cognitive digital identity system.</p>
+            <p class="copyright-text">&copy; 2026 Identra AI. All rights reserved.</p>
+        </div>
+        
+        <div class="footer-links">
+            <h5>Product</h5>
+            <a href="#hero">Home</a>
+            <a href="#features">Features</a>
+            <a href="#workflow">Workflow</a>
+            <a href="/dashboard/graph">Knowledge Graph</a>
+            <a href="/search/">Smart Search</a>
+        </div>
+        
+        <div class="footer-links">
+            <h5>Resources</h5>
+            <a href="/about">Documentation</a>
+            <a href="/about">API Status</a>
+            <a href="/about">Hackathon 2026</a>
+            <a href="/about">Community</a>
+        </div>
+        
+        <div class="footer-links">
+            <h5>Company & Legal</h5>
+            <a href="/about">About Us</a>
+            <a href="/about">Privacy Policy</a>
+            <a href="/about">Terms of Service</a>
+            <a href="/about">Security Audits</a>
+            <a href="/about">Contact Us</a>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <div class="footer-bottom-inner">
+            <span>Built for National Hackathon 2026</span>
+            <div class="social-links">
+                <a href="https://github.com" target="_blank" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                <a href="https://linkedin.com" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="https://twitter.com" target="_blank" title="Twitter/X"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" title="Discord"><i class="fa-brands fa-discord"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/landing.js') }}?v=200"></script>
+{% endblock %}
