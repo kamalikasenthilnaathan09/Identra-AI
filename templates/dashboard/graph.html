@@ -1,0 +1,251 @@
+{% extends "dashboard/base_dash.html" %}
+
+{% block dash_title %}Knowledge Graph{% endblock %}
+{% block dash_subtitle %}Interactive visualization of your digital identity node network.{% endblock %}
+
+{% block dash_content %}
+<div class="grid" style="grid-template-columns: 1fr 300px; gap: 1.5rem; align-items: start;">
+    
+    <!-- Graph Canvas -->
+    <div class="glass-card dash-widget" data-aos="fade-up">
+        <div class="widget-header">
+            <h3 class="widget-title"><i class="fa-solid fa-circle-nodes" style="color: var(--accent-cyan); margin-right: 8px;"></i> Identity Network Visualization</h3>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn btn-secondary" id="btn-zoom-in" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;" title="Zoom In">
+                    <i class="fa-solid fa-magnifying-glass-plus"></i> Zoom +
+                </button>
+                <button class="btn btn-secondary" id="btn-zoom-out" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;" title="Zoom Out">
+                    <i class="fa-solid fa-magnifying-glass-minus"></i> Zoom -
+                </button>
+                <button class="btn btn-secondary" id="btn-fit" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;" title="Fit View">
+                    <i class="fa-solid fa-expand"></i> Fit View
+                </button>
+                <button class="btn btn-secondary" id="btn-reset" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;" title="Reset Graph">
+                    <i class="fa-solid fa-rotate"></i> Reset
+                </button>
+            </div>
+        </div>
+        <div class="network-graph-canvas" id="knowledge-network"></div>
+    </div>
+    
+    <!-- Legend & Info Panel -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        
+        <!-- Node Type Legend -->
+        <div class="glass-card dash-widget" data-aos="fade-left">
+            <h3 class="widget-title" style="margin-bottom: 1.25rem;">Node Legend</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="width: 16px; height: 16px; border-radius: 50%; background: #6366F1; display: inline-block; box-shadow: 0 0 10px #6366F1;"></span>
+                    <span style="font-size: 0.9rem; color: #fff; font-weight: 600;">Skill</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="width: 16px; height: 16px; border-radius: 50%; background: #A855F7; display: inline-block; box-shadow: 0 0 10px #A855F7;"></span>
+                    <span style="font-size: 0.9rem; color: #fff; font-weight: 600;">Certificate</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="width: 16px; height: 16px; border-radius: 50%; background: #10B981; display: inline-block; box-shadow: 0 0 10px #10B981;"></span>
+                    <span style="font-size: 0.9rem; color: #fff; font-weight: 600;">Project</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="width: 16px; height: 16px; border-radius: 50%; background: #F59E0B; display: inline-block; box-shadow: 0 0 10px #F59E0B;"></span>
+                    <span style="font-size: 0.9rem; color: #fff; font-weight: 600;">Internship</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="width: 16px; height: 16px; border-radius: 50%; background: #06B6D4; display: inline-block; box-shadow: 0 0 10px #06B6D4;"></span>
+                    <span style="font-size: 0.9rem; color: #fff; font-weight: 600;">Education</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="width: 16px; height: 16px; border-radius: 50%; background: #F43F5E; display: inline-block; box-shadow: 0 0 10px #F43F5E;"></span>
+                    <span style="font-size: 0.9rem; color: #fff; font-weight: 600;">User / Identity</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Selected Node Info -->
+        <div class="glass-card dash-widget" data-aos="fade-left" data-aos-delay="100" id="node-info-panel">
+            <h3 class="widget-title" style="margin-bottom: 1rem;">Node Details</h3>
+            <div id="node-info-content" style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 1.5rem 0;">
+                <i class="fa-solid fa-arrow-pointer" style="font-size: 1.8rem; margin-bottom: 0.75rem; display: block; color: var(--accent-cyan);"></i>
+                Click any node in the graph to inspect details.
+            </div>
+        </div>
+        
+        <!-- Stats -->
+        <div class="glass-card dash-widget" data-aos="fade-left" data-aos-delay="200" id="graph-stats-panel">
+            <h3 class="widget-title" style="margin-bottom: 1rem;">Graph Statistics</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Total Nodes</span>
+                    <span id="stat-nodes" style="font-weight: 700; color: var(--neon-cyan); font-size: 1.1rem;">—</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Total Edges</span>
+                    <span id="stat-edges" style="font-weight: 700; color: var(--neon-purple); font-size: 1.1rem;">—</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Graph Status</span>
+                    <span style="font-weight: 700; color: #10b981;">Active</span>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
+
+{% block dash_js %}
+<!-- Vis.js Network library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css">
+
+<script>
+    // Vibrant Color map by node type
+    const NODE_COLORS = {
+        'Skill':      { background: '#25295c', border: '#6366F1', highlight: { background: '#3730a3', border: '#818cf8' }, font: { color: '#ffffff' } },
+        'Certificate':{ background: '#3b1764', border: '#A855F7', highlight: { background: '#581c87', border: '#c084fc' }, font: { color: '#ffffff' } },
+        'Project':    { background: '#064e3b', border: '#10B981', highlight: { background: '#047857', border: '#34d399' }, font: { color: '#ffffff' } },
+        'Internship': { background: '#451a03', border: '#F59E0B', highlight: { background: '#78350f', border: '#fbbf24' }, font: { color: '#ffffff' } },
+        'Education':  { background: '#083344', border: '#06B6D4', highlight: { background: '#0e7490', border: '#22d3ee' }, font: { color: '#ffffff' } },
+        'User':       { background: '#4c0519', border: '#F43F5E', highlight: { background: '#881337', border: '#fb7185' }, font: { color: '#ffffff' } },
+    };
+
+    const container = document.getElementById('knowledge-network');
+    let network = null;
+
+    fetch('/api/graph/data')
+        .then(res => res.json())
+        .then(data => {
+            const { nodes: rawNodes, edges: rawEdges } = data;
+
+            document.getElementById('stat-nodes').innerText = rawNodes.length;
+            document.getElementById('stat-edges').innerText = rawEdges.length;
+
+            const styledNodes = rawNodes.map(n => {
+                const colorSet = NODE_COLORS[n.group] || NODE_COLORS['Skill'];
+                const isUser = n.group === 'User';
+                return {
+                    ...n,
+                    shape: isUser ? 'star' : 'dot',
+                    size: isUser ? 45 : 32,
+                    borderWidth: 3,
+                    borderWidthSelected: 5,
+                    color: colorSet,
+                    font: { 
+                        color: '#FFFFFF', 
+                        size: isUser ? 18 : 15, 
+                        face: 'Outfit, Inter, sans-serif', 
+                        bold: true,
+                        strokeWidth: 4, 
+                        strokeColor: '#050816' 
+                    },
+                    shadow: { enabled: true, color: colorSet.border, size: 15, x: 0, y: 0 }
+                };
+            });
+
+            const styledEdges = rawEdges.map(e => ({
+                ...e,
+                color: { color: 'rgba(99, 102, 241, 0.5)', highlight: '#06B6D4', hover: '#38BDF8' },
+                font: { color: '#CBD5E1', size: 12, face: 'Inter, sans-serif', strokeWidth: 3, strokeColor: '#050816', align: 'middle' },
+                smooth: { type: 'continuous', roundness: 0.2 },
+                width: 2.5,
+                selectionWidth: 4
+            }));
+
+            const visData = {
+                nodes: new vis.DataSet(styledNodes),
+                edges: new vis.DataSet(styledEdges)
+            };
+
+            const options = {
+                autoResize: true,
+                height: '100%',
+                width: '100%',
+                physics: {
+                    enabled: true,
+                    solver: 'barnesHut',
+                    barnesHut: {
+                        gravitationalConstant: -18000,
+                        centralGravity: 0.2,
+                        springLength: 220,
+                        springConstant: 0.04,
+                        damping: 0.09
+                    },
+                    stabilization: { iterations: 150 }
+                },
+                interaction: {
+                    hover: true,
+                    tooltipDelay: 100,
+                    zoomView: true,
+                    dragView: true
+                },
+                layout: { randomSeed: 42 }
+            };
+
+            network = new vis.Network(container, visData, options);
+
+            // Auto fit upon initial render and stabilization
+            network.once('stabilizationIterationsDone', function() {
+                network.fit({ animation: { duration: 800, easingFunction: 'easeInOutQuad' } });
+            });
+            setTimeout(() => {
+                if (network) network.fit({ animation: { duration: 600, easingFunction: 'easeInOutQuad' } });
+            }, 600);
+
+            // Node click handler
+            network.on('click', function(params) {
+                if (params.nodes.length > 0) {
+                    const nodeId = params.nodes[0];
+                    const node = visData.nodes.get(nodeId);
+                    const infoEl = document.getElementById('node-info-content');
+                    const colorSet = NODE_COLORS[node.group] || NODE_COLORS['Skill'];
+                    infoEl.innerHTML = `
+                        <div style="text-align: left;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+                                <span style="width: 18px; height: 18px; border-radius: 50%; background: ${colorSet.border}; box-shadow: 0 0 12px ${colorSet.border}; display: inline-block;"></span>
+                                <span style="font-weight: 700; font-size: 1.1rem; color: #fff;">${node.label}</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">Type: <strong style="color: var(--text-primary);">${node.group || 'Unknown'}</strong></p>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Node ID: <strong style="color: var(--accent-cyan);">${nodeId}</strong></p>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('node-info-content').innerHTML = `
+                        <i class="fa-solid fa-arrow-pointer" style="font-size: 1.8rem; margin-bottom: 0.75rem; display: block; color: var(--accent-cyan);"></i>
+                        Click any node to inspect details.
+                    `;
+                }
+            });
+        })
+        .catch(err => {
+            container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);flex-direction:column;gap:1rem;"><i class="fa-solid fa-triangle-exclamation" style="font-size:2rem;color:#f59e0b;"></i><p>Error loading graph data.</p></div>';
+            console.error('Graph load error:', err);
+        });
+
+    // Control buttons
+    document.getElementById('btn-zoom-in').addEventListener('click', () => {
+        if (network) {
+            const scale = network.getScale();
+            network.moveTo({ scale: scale * 1.35, animation: { duration: 300 } });
+        }
+    });
+
+    document.getElementById('btn-zoom-out').addEventListener('click', () => {
+        if (network) {
+            const scale = network.getScale();
+            network.moveTo({ scale: scale * 0.75, animation: { duration: 300 } });
+        }
+    });
+
+    document.getElementById('btn-fit').addEventListener('click', () => {
+        if (network) network.fit({ animation: { duration: 600, easingFunction: 'easeInOutQuad' } });
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', () => {
+        if (network) {
+            network.setOptions({ physics: { enabled: true } });
+            network.fit({ animation: { duration: 600, easingFunction: 'easeInOutQuad' } });
+        }
+    });
+</script>
+{% endblock %}

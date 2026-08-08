@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>{% block title %}Identra AI - Intelligent Digital Identity System{% endblock %}</title>
+    <meta name="description" content="{% block description %}Identra AI automatically OCR scans, parses, classifies and charts your skills, certificates, projects and career milestones in a modern knowledge graph.{% endblock %}">
+    <meta name="author" content="Identra AI Team">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
+
+    <!-- CSS stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/toast.css') }}">
+    {% block extra_css %}{% endblock %}
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Scroll Animations CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+</head>
+<body data-theme="{{ user_info.theme_preset or 'default' }}" class="{% if user_info.dark_mode == False %}light-mode{% endif %}">
+
+    <!-- Glowing Background Blobs -->
+    <div class="glow-blob blob-1"></div>
+    <div class="glow-blob blob-2"></div>
+    <div class="glow-blob blob-3"></div>
+
+    <!-- Flash message alerts container -->
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}" role="alert">
+                        <span><i class="fa-solid {% if category == 'success' %}fa-circle-check{% elif category == 'danger' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %} mr-2"></i> {{ message }}</span>
+                        <button class="action-btn" onclick="this.parentElement.remove()" style="color: #fff; opacity: 0.8;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- Core Javascript files -->
+    <!-- GSAP Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- AOS Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    
+    <script>
+        // Init AOS
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof AOS !== 'undefined') {
+                AOS.init({
+                    duration: 800,
+                    once: true,
+                    offset: 100
+                });
+            }
+        });
+        
+        // Auto fade out flash messages
+        setTimeout(function() {
+            const flashes = document.querySelectorAll('.flash-message');
+            flashes.forEach(function(flash) {
+                gsap.to(flash, {
+                    x: 100,
+                    opacity: 0,
+                    duration: 0.3,
+                    onComplete: () => flash.remove()
+                });
+            });
+        }, 5000);
+    </script>
+    <!-- Main JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% if user_info.language and user_info.language != 'English' %}
+    <!-- Auto Full-Web Translation Engine -->
+    <div id="google_translate_element" style="display:none;"></div>
+    <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,ta,fr,es,de',
+        autoDisplay: false
+      }, 'google_translate_element');
+
+      var targetLang = "{{ t.code }}";
+      if (targetLang && targetLang !== 'en') {
+        setTimeout(function() {
+          var select = document.querySelector('select.goog-te-combo');
+          if (select) {
+            select.value = targetLang;
+            select.dispatchEvent(new Event('change'));
+          }
+        }, 500);
+      }
+    }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <style>
+    .goog-te-banner-frame.skiptranslate { display: none !important; }
+    body { top: 0px !important; }
+    .goog-tooltip, .goog-tooltip:hover { display: none !important; }
+    .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
+    #goog-gt-tt { display: none !important; visibility: hidden !important; }
+    </style>
+    {% endif %}
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

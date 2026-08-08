@@ -1,0 +1,260 @@
+{% extends "dashboard/base_dash.html" %}
+
+{% block dash_title %}AI Assistant{% endblock %}
+{% block dash_subtitle %}Cognitive interface to your entire digital identity database.{% endblock %}
+
+{% block dash_content %}
+<div class="grid dash-columns-grid" style="align-items: start;">
+    
+    <!-- Chat Interface -->
+    <div class="glass-card dash-widget" data-aos="fade-right">
+        <div class="widget-header" style="margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--grad-neon); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 0 15px rgba(91,124,250,0.4);">
+                    <i class="fa-solid fa-brain" style="color: #fff;"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 700; font-size: 1rem;">Identra AI</div>
+                    <div style="font-size: 0.75rem; color: #10b981; display: flex; align-items: center; gap: 5px;">
+                        <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; display: inline-block; animation: pulse 2s infinite;"></span>
+                        Online — Ready to search your identity
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat History -->
+        <div class="chat-history-log" id="chat-log">
+            <!-- Welcome Message from AI -->
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="chat-bubble chat-bubble-assistant">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <i class="fa-solid fa-brain" style="color: var(--neon-cyan); font-size: 0.85rem;"></i>
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--neon-cyan);">Identra AI</span>
+                    </div>
+                    Hello! I am your personal AI identity assistant. I have access to all your uploaded documents, career milestones, and skill graph nodes.<br><br>
+                    Here are some things I can help you with:
+                    <ul style="margin-top: 0.5rem; padding-left: 1.2rem; font-size: 0.85rem; color: var(--text-secondary);">
+                        <li>Retrieve certificate details</li>
+                        <li>Summarize your Python or AI projects</li>
+                        <li>Explain career timeline milestones</li>
+                        <li>Search for skills or internships</li>
+                    </ul>
+                    <span class="chat-timestamp">Just now</span>
+                </div>
+            </div>
+            
+            {% if history %}
+                {% for msg in history %}
+                <div style="display: flex; justify-content: {% if msg.role == 'user' %}flex-end{% else %}flex-start{% endif %};">
+                    <div class="chat-bubble chat-bubble-{{ msg.role }}">
+                        {% if msg.role == 'assistant' %}
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <i class="fa-solid fa-brain" style="color: var(--neon-cyan); font-size: 0.85rem;"></i>
+                            <span style="font-size: 0.75rem; font-weight: 600; color: var(--neon-cyan);">Identra AI</span>
+                        </div>
+                        {% endif %}
+                        {{ msg.message }}
+                        <span class="chat-timestamp">{{ msg.timestamp.strftime('%H:%M') }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="typing-indicator" style="display: none; padding: 0.5rem 0; color: var(--text-muted); font-size: 0.85rem; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-brain" style="color: var(--neon-cyan);"></i>
+            <span>Identra AI is thinking</span>
+            <span style="display: flex; gap: 3px; align-items: center;">
+                <span class="dot" style="width: 5px; height: 5px; background: var(--neon-cyan); border-radius: 50%; animation: blink 1.2s infinite 0s;"></span>
+                <span class="dot" style="width: 5px; height: 5px; background: var(--neon-cyan); border-radius: 50%; animation: blink 1.2s infinite 0.4s;"></span>
+                <span class="dot" style="width: 5px; height: 5px; background: var(--neon-cyan); border-radius: 50%; animation: blink 1.2s infinite 0.8s;"></span>
+            </span>
+        </div>
+
+        <!-- Prompt Suggestions -->
+        <div class="prompt-suggestions-row" id="suggestions-row">
+            <span class="suggestion-chip" onclick="useSuggestion(this)">What certificates do I have?</span>
+            <span class="suggestion-chip" onclick="useSuggestion(this)">Summarize my Python skills</span>
+            <span class="suggestion-chip" onclick="useSuggestion(this)">Find my internship experience</span>
+            <span class="suggestion-chip" onclick="useSuggestion(this)">Show career timeline</span>
+        </div>
+        
+        <!-- Input Row -->
+        <div class="chat-input-row">
+            <input type="text" id="chat-input" placeholder="Ask me anything about your digital identity..." autocomplete="off">
+            <button class="btn btn-primary" id="send-btn" style="padding: 0.75rem 1.2rem;" onclick="sendMessage()">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Right: Info Widgets -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        
+        <!-- AI Capabilities -->
+        <div class="glass-card dash-widget" data-aos="fade-left">
+            <h3 class="widget-title" style="margin-bottom: 1.25rem;">AI Capabilities</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.9rem;">
+                <div class="insight-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span style="font-size: 0.875rem;">OCR Document Analysis</span>
+                </div>
+                <div class="insight-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span style="font-size: 0.875rem;">Resume & Skill Parser</span>
+                </div>
+                <div class="insight-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span style="font-size: 0.875rem;">Knowledge Graph Query</span>
+                </div>
+                <div class="insight-item">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span style="font-size: 0.875rem;">Career Timeline Insights</span>
+                </div>
+                <div class="insight-item">
+                    <i class="fa-regular fa-circle" style="color: var(--text-muted);"></i>
+                    <span style="font-size: 0.875rem; color: var(--text-muted);">Gemini API Integration (Soon)</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Suggested Actions -->
+        <div class="glass-card dash-widget" data-aos="fade-left" data-aos-delay="100">
+            <h3 class="widget-title" style="margin-bottom: 1.25rem;">Quick Actions</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <a href="/documents/" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.6rem 1rem;">
+                    <i class="fa-solid fa-upload"></i> Upload New Document
+                </a>
+                <a href="/dashboard/graph" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.6rem 1rem;">
+                    <i class="fa-solid fa-circle-nodes"></i> View Knowledge Graph
+                </a>
+                <a href="/timeline/" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.6rem 1rem;">
+                    <i class="fa-solid fa-route"></i> Open Career Timeline
+                </a>
+                <a href="/dashboard/analytics" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.6rem 1rem;">
+                    <i class="fa-solid fa-chart-line"></i> Analytics Dashboard
+                </a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<style>
+@keyframes blink {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1); }
+}
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+</style>
+{% endblock %}
+
+{% block dash_js %}
+<script>
+    const chatLog = document.getElementById('chat-log');
+    const chatInput = document.getElementById('chat-input');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const sendBtn = document.getElementById('send-btn');
+
+    // Scroll chat to bottom on load
+    scrollToBottom();
+
+    function scrollToBottom() {
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function useSuggestion(el) {
+        chatInput.value = el.innerText;
+        chatInput.focus();
+        // Remove suggestion once used
+        el.remove();
+    }
+
+    // Send message on Enter key
+    chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    function appendBubble(role, text, time) {
+        const now = time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.justifyContent = role === 'user' ? 'flex-end' : 'flex-start';
+
+        const bubble = document.createElement('div');
+        bubble.className = `chat-bubble chat-bubble-${role}`;
+
+        if (role === 'assistant') {
+            bubble.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <i class="fa-solid fa-brain" style="color: var(--neon-cyan); font-size: 0.85rem;"></i>
+                    <span style="font-size: 0.75rem; font-weight: 600; color: var(--neon-cyan);">Identra AI</span>
+                </div>
+                ${text}
+                <span class="chat-timestamp">${now}</span>
+            `;
+        } else {
+            bubble.innerHTML = `${text}<span class="chat-timestamp">${now}</span>`;
+        }
+
+        // Entrance animation
+        bubble.style.opacity = '0';
+        bubble.style.transform = role === 'user' ? 'translateX(20px)' : 'translateX(-20px)';
+        
+        wrapper.appendChild(bubble);
+        chatLog.appendChild(wrapper);
+        scrollToBottom();
+
+        // GSAP entrance
+        gsap.to(bubble, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' });
+    }
+
+    function sendMessage() {
+        const msg = chatInput.value.trim();
+        if (!msg) return;
+
+        chatInput.value = '';
+        chatInput.disabled = true;
+        sendBtn.disabled = true;
+
+        // Show user bubble
+        appendBubble('user', msg);
+
+        // Show typing indicator
+        typingIndicator.style.display = 'flex';
+        chatLog.appendChild(typingIndicator);
+        scrollToBottom();
+
+        // POST to API
+        fetch('/assistant/message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg })
+        })
+        .then(res => res.json())
+        .then(data => {
+            typingIndicator.style.display = 'none';
+            chatLog.removeChild(typingIndicator);
+            appendBubble('assistant', data.reply, data.timestamp);
+            chatInput.disabled = false;
+            sendBtn.disabled = false;
+            chatInput.focus();
+        })
+        .catch(err => {
+            typingIndicator.style.display = 'none';
+            appendBubble('assistant', 'A network exception occurred. Please check connectivity and try again.');
+            chatInput.disabled = false;
+            sendBtn.disabled = false;
+            console.error(err);
+        });
+    }
+</script>
+{% endblock %}

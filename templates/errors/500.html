@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Server Error | Identra AI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+<style>
+    .error-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+    }
+    .error-code {
+        font-size: 10rem;
+        font-weight: 900;
+        line-height: 1;
+        background: linear-gradient(135deg, #ef4444, #f59e0b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .error-icon {
+        font-size: 4rem;
+        color: #ef4444;
+        margin-bottom: 1.5rem;
+        animation: pulse-err 2s ease-in-out infinite;
+    }
+    @keyframes pulse-err {
+        0%, 100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.1); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <div class="error-code">500</div>
+    <h2 style="font-size: 1.8rem; margin-top: 0.5rem;">System Core Exception</h2>
+    <p style="color: var(--text-muted); margin-top: 1rem; max-width: 450px; font-size: 1rem;">
+        A critical error has occurred in the cognitive processing pipeline. Our neural scanners are working to resolve the issue.
+    </p>
+    <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+        <a href="/" class="btn btn-primary"><i class="fa-solid fa-house"></i> Back Home</a>
+        <a href="javascript:location.reload()" class="btn btn-secondary"><i class="fa-solid fa-rotate"></i> Try Again</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,236 @@
+{% extends "dashboard/base_dash.html" %}
+
+{% block dash_title %}☁ My Drive Integration{% endblock %}
+{% block dash_subtitle %}Securely connect your personal Google Drive account, preview AI insights, and batch import documents into Identra AI.{% endblock %}
+
+{% block dash_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/google_drive.css') }}">
+{% endblock %}
+
+{% block dash_content %}
+<!-- 1. Google Account Connection & Statistics Hero Card -->
+<section class="drive-hero-card" data-aos="fade-up">
+    <div class="drive-account-info">
+        <div class="drive-avatar-circle">
+            <i class="fa-brands fa-google"></i>
+        </div>
+        <div class="drive-account-details">
+            {% if account and account.access_token %}
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <h3 style="margin: 0;">{{ account.google_email }}</h3>
+                    <span class="status-badge-connected"><i class="fa-solid fa-circle-check"></i> Connected to Google Drive</span>
+                </div>
+                
+                <!-- Drive Statistics Badges -->
+                <div style="display: flex; gap: 12px; margin-top: 0.6rem; flex-wrap: wrap;">
+                    <span class="badge badge-indigo" style="font-size: 0.78rem;"><i class="fa-solid fa-hard-drive"></i> {{ total_size_kb }} KB Connected</span>
+                    <span class="badge badge-certificate" style="font-size: 0.78rem;"><i class="fa-solid fa-file-shield"></i> {{ imported_files|length }} Files Synced</span>
+                    <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10B981; font-size: 0.78rem;"><i class="fa-solid fa-shield-halved"></i> Duplicate Guard Active</span>
+                </div>
+            {% else %}
+                <h3>Google Drive Disconnected</h3>
+                <span class="status-badge-disconnected"><i class="fa-solid fa-circle-exclamation"></i> Action Required</span>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.4rem;">Connect your Google account to sync PDF, DOCX, and image documents into AI memory.</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        {% if account and account.access_token %}
+            <!-- Auto-Sync Toggle Switch -->
+            <div class="autosync-card-wrapper">
+                <i class="fa-solid fa-rotate-solid" style="color: var(--neon-cyan); font-size: 0.9rem;"></i>
+                <span style="font-size: 0.82rem; color: #fff; font-weight: 600;">Auto-Sync:</span>
+                <label class="switch">
+                    <input type="checkbox" id="autosync-toggle" {% if auto_sync_enabled %}checked{% endif %} onchange="toggleAutoSync(this.checked)">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <form action="/google-drive/disconnect" method="POST" style="margin: 0;">
+                <button type="submit" class="btn btn-secondary" style="border-color: rgba(239, 68, 68, 0.3); color: #f87171;" onclick="return confirm('Disconnect Google Drive account?')">
+                    <i class="fa-solid fa-link-slash"></i> Disconnect Drive
+                </button>
+            </form>
+        {% else %}
+            <a href="/google-drive/connect" class="btn-google-connect">
+                <i class="fa-brands fa-google"></i> Connect Google Drive
+            </a>
+        {% endif %}
+    </div>
+</section>
+
+{% if account and account.access_token %}
+<!-- 2. AI Drive Insights & Recommendations Widget -->
+<section class="glass-card dash-widget" style="margin-bottom: 2rem;" data-aos="fade-up" data-aos-delay="50">
+    <div class="widget-header">
+        <h3 class="widget-title"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--neon-cyan); margin-right: 6px;"></i> AI Drive Insights & Smart Recommendations</h3>
+        <span class="badge badge-indigo">Real-Time Cognitive Analysis</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem;">
+        {% for rec in recommendations %}
+            <div style="background: rgba(11, 17, 32, 0.85); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.1rem; display: flex; gap: 1rem; align-items: flex-start;">
+                <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(99, 102, 241, 0.15); color: var(--neon-cyan); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
+                    <i class="fa-solid {{ rec.icon }}"></i>
+                </div>
+                <div>
+                    <h4 style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.2rem;">{{ rec.title }}</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;">{{ rec.desc }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- 3. Live Google Drive File Browser -->
+<section class="glass-card dash-widget" id="drive-browser-card" data-aos="fade-up" data-aos-delay="100" style="margin-bottom: 2rem;">
+    <div class="widget-header" style="flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h3 class="widget-title">Google Drive Cloud Browser</h3>
+            <p style="font-size: 0.84rem; color: var(--text-muted);">Preview AI category confidence before batch importing documents into Identra AI.</p>
+        </div>
+        
+        <div style="display: flex; gap: 0.8rem; align-items: center;">
+            <!-- Batch Import Selected Button -->
+            <button id="batch-import-btn" class="btn btn-primary" style="display: none;" onclick="batchImportSelected()">
+                <i class="fa-solid fa-cloud-arrow-down"></i> Batch Import Selected (<span id="selected-count">0</span>)
+            </button>
+
+            <button class="action-btn" onclick="loadDriveFiles()" title="Refresh Files"><i class="fa-solid fa-rotate"></i></button>
+        </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <div class="drive-controls-bar">
+        <div class="nav-search" style="flex: 1; max-width: 380px;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="drive-search-input" placeholder="Search Drive files by name, OCR text or category..." style="width: 100%;">
+        </div>
+
+        <div class="drive-filter-chips">
+            <button class="chip-filter active" data-type="">All Files</button>
+            <button class="chip-filter" data-type="pdf"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+            <button class="chip-filter" data-type="docx"><i class="fa-solid fa-file-word"></i> DOCX</button>
+            <button class="chip-filter" data-type="images"><i class="fa-solid fa-file-image"></i> Images</button>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="drive-loading-spinner" style="text-align: center; padding: 3rem; color: var(--accent-cyan);">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size: 2.2rem; margin-bottom: 0.8rem;"></i>
+        <div>Fetching files & running AI category classification...</div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="drive-empty-state" style="display: none; text-align: center; padding: 3rem; color: var(--text-muted);">
+        <i class="fa-regular fa-folder-open" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--accent-indigo);"></i>
+        <h4>No Drive Files Found</h4>
+        <p style="font-size: 0.85rem; max-width: 420px; margin: 0.4rem auto 0;">No documents match your current filter or search criteria in Google Drive.</p>
+    </div>
+
+    <!-- Drive File Browser Table -->
+    <div style="overflow-x: auto;">
+        <table class="drive-file-table">
+            <thead>
+                <tr>
+                    <th style="width: 40px; text-align: center;">
+                        <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this.checked)" style="cursor: pointer;">
+                    </th>
+                    <th>File Name</th>
+                    <th>AI Category & Confidence</th>
+                    <th>Size</th>
+                    <th>Last Modified</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="drive-files-tbody">
+                <!-- Rendered dynamically via JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align: center; margin-top: 1.5rem;">
+        <button id="load-more-btn" class="btn btn-secondary" style="display: none;" onclick="loadDriveFiles(true)">
+            Load More Files <i class="fa-solid fa-arrow-down"></i>
+        </button>
+    </div>
+</section>
+{% endif %}
+
+<!-- 4. Imported Drive Files History -->
+<section class="glass-card dash-widget" data-aos="fade-up" data-aos-delay="200">
+    <div class="widget-header">
+        <h3 class="widget-title">Imported Google Drive Records</h3>
+        <span class="badge badge-indigo">{{ imported_files|length }} Files Synced</span>
+    </div>
+
+    <div class="docs-list-container">
+        {% if imported_files %}
+            {% for file in imported_files %}
+                <div class="document-item-row">
+                    <div class="doc-info">
+                        <div class="doc-icon-box">
+                            <i class="fa-solid fa-cloud-arrow-down" style="color: var(--accent-cyan);"></i>
+                        </div>
+                        <div class="doc-meta">
+                            <span class="doc-name">{{ file.file_name }}</span>
+                            <div class="doc-details">
+                                <span class="badge badge-certificate"><i class="fa-solid fa-check"></i> {{ file.status }}</span>
+                                <span>&bull;</span>
+                                <span>{{ file.imported_at.strftime('%b %d, %Y %H:%M') }}</span>
+                                <span>&bull;</span>
+                                <span>{{ (file.size / 1024)|round(2) }} KB</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="doc-actions">
+                        <a href="/documents/vault" class="action-btn" title="View in AI Document Vault"><i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                <i class="fa-solid fa-cloud" style="font-size: 2rem; margin-bottom: 0.8rem; opacity: 0.5;"></i>
+                <p style="font-size: 0.88rem;">No documents imported from Google Drive yet. Click 'Import' on any file above to sync it!</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- AI Drive Preview Modal before Import -->
+<div class="modal-overlay" id="drive-preview-modal">
+    <div class="glass-card modal-content-card" style="max-width: 580px;">
+        <span class="modal-close-btn" onclick="closeDrivePreviewModal()"><i class="fa-solid fa-xmark"></i></span>
+        <h3 id="prev-file-name" style="margin-bottom: 0.5rem; font-size: 1.25rem; color: #fff;">Drive File Preview</h3>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.2rem;">AI Cognitive scan & category prediction before importing into Identra AI workspace:</p>
+
+        <div style="background: rgba(11, 17, 32, 0.85); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.1rem; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.85rem;">
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);">AI Predicted Category:</span>
+                <strong style="color: #fff;" id="prev-file-category">Personal Documents</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);">Confidence Score:</span>
+                <strong style="color: #10B981;" id="prev-file-confidence">98%</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);">Matched Keywords:</span>
+                <span style="color: var(--neon-cyan);" id="prev-file-keywords">Aadhaar, Date of Birth</span>
+            </div>
+            <div style="border-top: 1px dashed var(--border-subtle); padding-top: 0.5rem; margin-top: 0.2rem;">
+                <span style="color: var(--text-muted); display: block; margin-bottom: 0.2rem;">OCR Snippet Preview:</span>
+                <div style="color: var(--text-secondary); font-size: 0.8rem; background: rgba(0,0,0,0.3); padding: 0.6rem; border-radius: 6px;" id="prev-file-snippet">Loading snippet...</div>
+            </div>
+        </div>
+
+        <button id="prev-import-confirm-btn" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-weight: 700;">
+            <i class="fa-solid fa-cloud-arrow-down"></i> Confirm & Import into Workspace
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block dash_js %}
+<script src="{{ url_for('static', filename='js/google_drive.js') }}"></script>
+{% endblock %}
