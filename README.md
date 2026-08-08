@@ -209,59 +209,7 @@ Identra-AI/
 ├── .gitignore
 └── .dockerignore
 ```
-## 📸 Project Screenshots
 
-### 🏠 Landing Page
-
-![Landing Page](project%20screenshots/landing%20page.png)
-
-### 📊 Dashboard
-
-![Dashboard](project%20screenshots/dashboard.png)
-
-### 📄 Document Vault
-
-![Document Vault](project%20screenshots/document%20vault.png)
-
-### 🔍 Smart Search
-
-![Smart Search](project%20screenshots/smartsearch.png)
-
-### 🤖 AI Assistant
-
-![AI Assistant](project%20screenshots/AI%20assistant.png)
-
-### 📈 Analytics
-
-![Analytics](project%20screenshots/analytics.png)
-
-### 🧠 Knowledge Graph
-
-![Knowledge Graph](project%20screenshots/knowledge%20graph.png)
-
-### 📅 Career Timeline
-
-![Career Timeline](project%20screenshots/career%20timeline.png)
-
-### 📄 Resume Builder
-
-![Resume Builder](project%20screenshots/resume%20builder.png)
-
-### 👤 Profile
-
-![Profile](project%20screenshots/profile.png)
-
-### ⚙️ Settings
-
-![Settings](project%20screenshots/settings.png)
-
-### ☁️ Google Drive Integration
-
-![Drive Integration](project%20screenshots/drive%20integration.png)
-
-### 🌐 Tamil Language Support
-
-![Tamil](project%20screenshots/tamil.png)
 ---
 
 # ⚙️ Installation & Setup
