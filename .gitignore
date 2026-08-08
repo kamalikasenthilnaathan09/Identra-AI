@@ -1,9 +1,25 @@
-.env
-.venv/
-venv/
+# Python
 __pycache__/
-*.pyc
-instance/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Environment variables / secrets
+.env
+
+# SQLite database
 *.db
-uploads/*
-!.gitkeep
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
